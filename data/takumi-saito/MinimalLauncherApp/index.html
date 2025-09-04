@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Android Legacy Metrics Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>Android Legacy Metrics</h1>
+    <div class="controls">
+      <label for="repoSelect">Repo:</label>
+      <select id="repoSelect" aria-label="Select repository"></select>
+      <input id="repoInput" class="hidden" placeholder="org/repo を入力 (例: takumi-saito/MinimalLauncherApp)" />
+      <button id="loadBtn" class="btn">読み込み</button>
+    </div>
+    <p class="hint">※ レジストリが未整備の場合は手入力して読み込めます。</p>
+  </header>
+
+  <main>
+    <section id="summary" class="cards"></section>
+
+    <section class="charts">
+      <div class="chart-card">
+        <h2>Legacy/Support 指標</h2>
+        <canvas id="legacyChart" height="140"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>Java 比率（時系列）</h2>
+        <canvas id="ratioChart" height="140"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>Legacy 合計（時系列）</h2>
+        <canvas id="legacyTrendChart" height="140"></canvas>
+      </div>
+    </section>
+
+    <section class="raw">
+      <details>
+        <summary>JSON（latest）を見る</summary>
+        <pre id="rawJson" class="code"></pre>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span id="meta"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
