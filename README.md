@@ -1,8 +1,3 @@
-以下は `legacy-graph` 用の **README.md** のコンパクト版です。
-（GitHub Pages で可視化、`android-legacy-metrics` から JSON を受け取る前提）
-
----
-
 # legacy-graph
 
 複数の Android リポジトリから収集した **技術負債メトリクス(JSON)** を保存・公開するリポジトリです。
