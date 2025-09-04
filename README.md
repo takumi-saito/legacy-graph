@@ -11,7 +11,7 @@ GitHub Pages を有効化すると、同梱のダッシュボード（`index.htm
 ```
 legacy-graph/
 ├─ data/
-│  ├─ _registry.json            # 監視対象の一覧（任意）
+│  ├─ registry.json            # 監視対象の一覧（任意）
 │  └─ <org>/<repo>/
 │       ├─ latest.json          # 最新スナップショット
 │       ├─ 20250901T020000Z.json
@@ -55,7 +55,7 @@ legacy-graph/
 
 任意ファイル：
 
-* `data/_registry.json` … 表示用の候補リポ一覧
+* `data/registry.json` … 表示用の候補リポ一覧
   `{"repos": ["takumi-saito/MinimalLauncherApp", "..."]}`
 * `data/<org>/<repo>/index.json` … 履歴ファイル名の配列
   `{"history": ["20250901T020000Z.json","20250904T060000Z.json"]}`

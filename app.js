@@ -1,5 +1,5 @@
 /* global Chart */
-const REGISTRY_URL = "data/_registry.json"; // 例: { "repos": ["takumi-saito/MinimalLauncherApp", ...] }
+const REGISTRY_URL = "data/registry.json"; // 例: { "repos": ["takumi-saito/MinimalLauncherApp", ...] }
 const BYTES = new Intl.NumberFormat("ja-JP");
 
 let legacyChart, ratioChart, legacyTrendChart;
