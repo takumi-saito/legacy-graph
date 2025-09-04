@@ -5,28 +5,64 @@ const BYTES = new Intl.NumberFormat("ja-JP");
 let legacyChart, ratioChart, legacyTrendChart;
 
 const $ = (id) => document.getElementById(id);
-const repoSelect = $("repoSelect");
-const repoInput = $("repoInput");
-const loadBtn = $("loadBtn");
-const summary = $("summary");
-const rawJson = $("rawJson");
-const metaEl = $("meta");
 
-// 初期化
-init();
+// DOMContentLoaded を待ってから初期化
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM読み込み完了 - 初期化を開始します");
+  
+  const repoSelect = $("repoSelect");
+  const repoInput = $("repoInput");
+  const loadBtn = $("loadBtn");
+  const summary = $("summary");
+  const rawJson = $("rawJson");
+  const metaEl = $("meta");
+  
+  // DOM要素の存在確認
+  if (!repoSelect || !repoInput || !loadBtn) {
+    console.error("必要なDOM要素が見つかりません:", {
+      repoSelect: !!repoSelect,
+      repoInput: !!repoInput, 
+      loadBtn: !!loadBtn
+    });
+    return;
+  }
+  
+  console.log("DOM要素確認OK - 初期化関数を呼び出します");
+  
+  // グローバルスコープに配置（他の関数から参照するため）
+  window.repoSelect = repoSelect;
+  window.repoInput = repoInput;
+  window.loadBtn = loadBtn;
+  window.summary = summary;
+  window.rawJson = rawJson;
+  window.metaEl = metaEl;
+  
+  // 初期化
+  init();
+});
 
 async function init() {
   // レジストリ読み込み（無ければ手入力に切り替え）
+  console.log("初期化開始: レジストリを読み込みます...");
   const repos = await loadRegistry();
+  console.log("レジストリ読み込み結果:", repos);
+  
   if (repos && repos.length) {
-    repoSelect.innerHTML = repos.map(r => `<option value="${r}">${r}</option>`).join("");
+    console.log(`${repos.length}個のリポジトリが見つかりました:`, repos);
+    const options = repos.map(r => `<option value="${r}">${r}</option>`).join("");
+    console.log("作成したオプションHTML:", options);
+    repoSelect.innerHTML = options;
+    console.log("セレクトボックスの内容:", repoSelect.innerHTML);
+    console.log("セレクトボックスのオプション数:", repoSelect.options.length);
   } else {
+    console.log("レジストリが空または読み込み失敗 - 手入力モードに切り替えます");
     repoSelect.classList.add("hidden");
     repoInput.classList.remove("hidden");
   }
 
   loadBtn.addEventListener("click", () => {
     const slug = repoSelect.classList.contains("hidden") ? repoInput.value.trim() : repoSelect.value;
+    console.log("読み込みボタンクリック - 選択されたリポジトリ:", slug);
     if (!slug || !slug.includes("/")) {
       alert("org/repo の形式で指定してください");
       return;
@@ -36,17 +72,32 @@ async function init() {
 
   // 初回自動読み込み（レジストリがある場合のみ先頭を表示）
   if (repos && repos.length) {
+    console.log("初回自動読み込み:", repos[0]);
     await loadRepo(repos[0]);
   }
 }
 
 async function loadRegistry() {
   try {
+    console.log("レジストリURL:", REGISTRY_URL);
     const res = await fetch(REGISTRY_URL, { cache: "no-store" });
-    if (!res.ok) throw new Error("no registry");
+    console.log("レジストリ fetch 結果:", res.ok ? "成功" : `失敗 (${res.status})`);
+    
+    if (!res.ok) {
+      throw new Error(`レジストリ読み込み失敗: HTTP ${res.status}`);
+    }
+    
     const json = await res.json();
-    return Array.isArray(json.repos) ? json.repos : [];
-  } catch {
+    console.log("レジストリ JSON:", json);
+    
+    if (!json || !Array.isArray(json.repos)) {
+      console.warn("レジストリフォーマットエラー - repos 配列が見つかりません:", json);
+      return [];
+    }
+    
+    return json.repos;
+  } catch (error) {
+    console.error("レジストリ読み込みエラー:", error.message);
     return [];
   }
 }
@@ -71,6 +122,7 @@ async function loadHistoryIndex(slug) {
 
 async function loadRepo(slug) {
   const latestUrl = latestPath(slug);
+  const metaEl = window.metaEl;
   metaEl.textContent = `読み込み中… ${slug}`;
 
   try {
@@ -103,6 +155,8 @@ async function loadRepo(slug) {
 
 function renderLatest(slug, m) {
   // サマリー
+  const summary = window.summary;
+  const rawJson = window.rawJson;
   const javaFiles = num(m?.files?.java);
   const ktFiles = num(m?.files?.kotlin);
   const javaRatio = (m?.language?.java_file_ratio ?? 0) * 100;
